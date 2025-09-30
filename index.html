@@ -3,7 +3,9 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Terminal Portfolio</title>
+    <title>Blood - Terminal Portfolio</title>
+
+    <!-- Fonts & Icons -->
     <link
       href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap"
       rel="stylesheet"
@@ -12,10 +14,15 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
     />
+
+    <!-- Stylesheet -->
     <link rel="stylesheet" href="style.css" />
   </head>
+
   <body>
+    <!-- Main Terminal Container -->
     <div class="terminal">
+      <!-- Terminal Header -->
       <div class="terminal-header">
         <div class="terminal-left">
           <div class="terminal-buttons">
@@ -26,8 +33,8 @@
           <div class="terminal-title">Blood@terminal: ~</div>
         </div>
 
-        <!-- Navigation rapide dans le header -->
-        <div class="quick-nav" id="quick-nav">
+        <!-- Quick Navigation -->
+        <nav class="quick-nav" id="quick-nav">
           <button class="quick-nav-btn" data-command="help">
             <i class="fa-solid fa-circle-question nav-icon"></i>
             <span class="nav-text">Help</span>
@@ -48,11 +55,14 @@
             <i class="fa-solid fa-envelope nav-icon"></i>
             <span class="nav-text">Contact</span>
           </button>
-        </div>
+        </nav>
       </div>
 
+      <!-- Terminal Body -->
       <div class="terminal-body" id="terminal">
-        <div class="output"><div class="ascii-art" id="ascii-art"></div></div>
+        <div class="output">
+          <div class="ascii-art" id="ascii-art"></div>
+        </div>
         <div class="output">
           <span class="info">Welcome to my interactive portfolio!</span>
         </div>
@@ -62,6 +72,8 @@
           >
         </div>
         <br />
+
+        <!-- Input Line -->
         <div class="input-line">
           <span class="prompt">Blood@portfolio:~$</span>
           <input
@@ -76,7 +88,7 @@
       </div>
     </div>
 
-    <!-- Galerie d'images -->
+    <!-- Gallery Modal -->
     <div class="gallery-container" id="gallery-container">
       <div class="gallery-header">
         <div class="gallery-buttons">
@@ -84,10 +96,14 @@
         </div>
         <div class="gallery-title">Blood@projects: ~</div>
       </div>
+
       <div class="gallery-body">
+        <!-- Sidebar - Project List -->
         <div class="gallery-sidebar">
           <div class="project-list" id="project-list"></div>
         </div>
+
+        <!-- Content Area -->
         <div class="gallery-content">
           <div class="image-container" id="image-container"></div>
           <div class="gallery-navigation">
@@ -102,6 +118,8 @@
         </div>
       </div>
     </div>
+
+    <!-- JavaScript -->
     <script src="script.js"></script>
   </body>
 </html>

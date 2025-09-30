@@ -1,264 +1,241 @@
-let config = {},
-  commandHistory = [],
-  historyIndex = -1,
-  galleryProjects = [],
-  currentProject = null,
-  currentImageIndex = 0;
+// ============================================
+// STATE MANAGEMENT
+// ============================================
+const state = {
+  config: {},
+  commandHistory: [],
+  historyIndex: -1,
+  gallery: {
+    projects: [],
+    currentProject: null,
+    currentImageIndex: 0,
+  },
+};
 
+// ============================================
+// INITIALIZATION
+// ============================================
 async function loadConfig() {
   try {
-    config = await (await fetch("config.json")).json();
-    initializeTerminal();
-  } catch (e) {
-    console.error("Error loading config:", e);
+    const response = await fetch("config.json");
+    state.config = await response.json();
+    initializeApp();
+  } catch (error) {
+    console.error("Error loading config:", error);
   }
 }
 
+function initializeApp() {
+  initializeTerminal();
+  initializeGallery();
+  setupEventListeners();
+}
+
+// ============================================
+// TERMINAL - INITIALIZATION
+// ============================================
 function initializeTerminal() {
-  let e = document.getElementById("ascii-art");
-  document.querySelector(".info").textContent = config.welcomeMessage;
-  document.querySelector(".command-help").textContent =
-    "Use the buttons above or type 'help' for commands";
-  typeAsciiArt(e, config.asciiArt, 40);
-  initGallery();
-  setupTerminal();
-  setupQuickNav();
+  const asciiArtElement = document.getElementById("ascii-art");
+  const infoElement = document.querySelector(".info");
+  const helpElement = document.querySelector(".command-help");
+
+  infoElement.textContent = state.config.welcomeMessage;
+  helpElement.textContent = "Use the buttons above or type 'help' for commands";
+
+  typeAsciiArt(asciiArtElement, state.config.asciiArt, 40);
 }
 
-function typeAsciiArt(e, t, n = 20) {
-  e.innerHTML = "";
-  let r = Math.max(...t.map((e) => e.length)),
-    o = 0,
-    l = t.map(() => "");
-  !(function a() {
-    if (o < r) {
-      for (let i = 0; i < t.length; i++)
-        o < t[i].length ? (l[i] += t[i][o]) : (l[i] += " ");
-      e.innerHTML = l.join("\n");
-      o++;
-      setTimeout(a, n);
-    }
-  })();
-}
+function setupEventListeners() {
+  setupTerminalInput();
+  setupQuickNavigation();
+  setupGalleryControls();
 
-function typeText(e, t, n = 15, r = null) {
-  e.innerHTML = "";
-  let o = 0,
-    l = document.getElementById("terminal");
-  !(function a() {
-    o < t.length
-      ? ((e.innerHTML += "\n" === t[o] ? "<br>" : t[o]),
-        o++,
-        (l.scrollTop = l.scrollHeight),
-        setTimeout(a, n))
-      : r && r();
-  })();
-}
-
-function setupQuickNav() {
-  document.querySelectorAll(".quick-nav-btn").forEach((e) => {
-    e.addEventListener("click", () => {
-      executeCommandFromButton(e.getAttribute("data-command"));
-    });
+  // Auto-focus on terminal input when clicking anywhere
+  document.addEventListener("click", () => {
+    document.getElementById("terminal-input")?.focus();
   });
 }
 
-function executeCommandFromButton(e) {
-  let t = document.getElementById("terminal-input"),
-    n = document.getElementById("terminal"),
-    r = document.createElement("div");
-  r.innerHTML = `<span class="prompt">Blood@portfolio:~$</span><span class="command">${e}</span>`;
-  let o = document.createElement("div");
-  o.className = "output";
-  let l = document.querySelector(".input-line");
-  n.insertBefore(r, l);
-  n.insertBefore(o, l);
-  n.scrollTop = n.scrollHeight;
-  let a = executeCommand(e, !1);
-  if (a) {
-    let i = document.createElement("span");
-    o.appendChild(i);
-    typeText(i, a.replace(/<br>/g, "\n").replace(/<[^>]+>/g, ""), 10, () => {
-      t.focus();
-    });
-  } else t.focus();
+// ============================================
+// TERMINAL - INPUT HANDLING
+// ============================================
+function setupTerminalInput() {
+  const input = document.getElementById("terminal-input");
+  const suggestion = document.getElementById("suggestion-overlay");
+  const terminal = document.getElementById("terminal");
+
+  if (!input || !suggestion) return;
+
+  // Handle input changes
+  input.addEventListener("input", () => {
+    updateInputWidth(input);
+    updateSuggestion(input, suggestion);
+  });
+
+  // Handle keyboard events
+  input.addEventListener("keydown", (e) => {
+    handleKeyboardInput(e, input, suggestion, terminal);
+  });
+
+  // Initial width
+  updateInputWidth(input);
 }
 
-function initGallery() {
-  try {
-    galleryProjects = [
-      {
-        name: "Anime Project",
-        folder: "anime",
-        images: [
-          "image-13.jpg",
-          "image-14.jpg",
-          "image-23.jpg",
-          "image-34.jpg",
-        ],
-      },
-      {
-        name: "Cartoony Project",
-        folder: "cartoony",
-        images: ["image-90.jpg", "image-92.jpg", "image-95.jpg"],
-      },
-      {
-        name: "Videos Test",
-        folder: "videos",
-        images: [
-          "low_size.mp4",
-          "mid_size.mp4",
-          "high_size.mp4",
-          "huge_size.mp4",
-        ],
-      },
-    ];
-    document
-      .getElementById("gallery-close")
-      .addEventListener("click", closeGallery);
-    document
-      .getElementById("prev-btn")
-      .addEventListener("click", showPreviousImage);
-    document
-      .getElementById("next-btn")
-      .addEventListener("click", showNextImage);
-    populateProjectList();
-  } catch (e) {
-    console.error("Erreur lors de l'initialisation de la galerie:", e);
+function updateInputWidth(input) {
+  const tempSpan = document.createElement("span");
+  tempSpan.style.cssText =
+    "visibility:hidden;position:absolute;white-space:pre;";
+  tempSpan.style.font = window.getComputedStyle(input).font;
+  tempSpan.textContent = input.value || " ";
+
+  document.body.appendChild(tempSpan);
+  input.style.width = `${tempSpan.offsetWidth + 2}px`;
+  document.body.removeChild(tempSpan);
+}
+
+function updateSuggestion(input, suggestion) {
+  const value = input.value.toLowerCase();
+
+  if (!value) {
+    suggestion.textContent = "";
+    return;
+  }
+
+  const matches = Object.keys(commands).filter((cmd) => cmd.startsWith(value));
+  suggestion.textContent =
+    matches.length > 0 ? matches[0].substring(value.length) : "";
+}
+
+function handleKeyboardInput(e, input, suggestion, terminal) {
+  setTimeout(() => updateInputWidth(input), 0);
+
+  switch (e.key) {
+    case "Enter":
+      handleEnterKey(input, suggestion, terminal);
+      break;
+    case "ArrowUp":
+      e.preventDefault();
+      navigateHistory("up", input, suggestion);
+      break;
+    case "ArrowDown":
+      e.preventDefault();
+      navigateHistory("down", input, suggestion);
+      break;
+    case "Tab":
+    case "ArrowRight":
+      if (suggestion.textContent) {
+        e.preventDefault();
+        input.value += suggestion.textContent;
+        suggestion.textContent = "";
+        input.dispatchEvent(new Event("input"));
+      }
+      break;
   }
 }
 
-function isVideoFile(filename) {
-  const videoExtensions = [".mp4", ".webm", ".ogg", ".mov"];
-  return videoExtensions.some((ext) => filename.toLowerCase().endsWith(ext));
-}
+function handleEnterKey(input, suggestion, terminal) {
+  const command = input.value;
+  const inputLine = document.querySelector(".input-line");
 
-function openGallery() {
-  let e = document.getElementById("gallery-container");
-  e.style.display = "block";
-  e.style.opacity = "0";
-  setTimeout(() => {
-    e.classList.add("opening");
-    e.style.opacity = "1";
-  }, 10);
-  setTimeout(() => {
-    galleryProjects.length > 0 &&
-      !currentProject &&
-      selectProject(galleryProjects[0]);
-  }, 100);
-}
+  // Display command
+  const commandLine = document.createElement("div");
+  commandLine.innerHTML = `<span class="prompt">Blood@portfolio:~$</span><span class="command">${command}</span>`;
 
-function closeGallery() {
-  let e = document.getElementById("gallery-container");
-  e.style.opacity = "0";
-  e.classList.remove("opening");
-  setTimeout(() => {
-    e.style.display = "none";
-    currentProject = null;
-    currentImageIndex = 0;
-  }, 300);
-}
+  // Create output container
+  const output = document.createElement("div");
+  output.className = "output";
 
-function populateProjectList() {
-  let e = document.getElementById("project-list");
-  e.innerHTML = "";
-  galleryProjects.forEach((t) => {
-    let n = document.createElement("div");
-    n.className = "project-item";
-    n.textContent = t.name;
-    n.addEventListener("click", () => selectProject(t));
-    e.appendChild(n);
-  });
-}
+  // Insert before input line
+  terminal.insertBefore(commandLine, inputLine);
+  terminal.insertBefore(output, inputLine);
 
-function selectProject(e) {
-  currentProject = e;
-  currentImageIndex = 0;
-  document.querySelectorAll(".project-item").forEach((t) => {
-    t.textContent === e.name
-      ? t.classList.add("active")
-      : t.classList.remove("active");
-  });
-  showCurrentImage();
-}
+  // Clear input
+  input.value = "";
+  suggestion.textContent = "";
+  updateInputWidth(input);
+  terminal.scrollTop = terminal.scrollHeight;
 
-function showCurrentImage() {
-  if (!currentProject || !currentProject.images) return;
-
-  let container = document.getElementById("image-container");
-  let counter = document.getElementById("image-counter");
-
-  container.innerHTML = "";
-
-  if (currentProject.images.length > 0) {
-    const currentFile = currentProject.images[currentImageIndex];
-    const isVideo = isVideoFile(currentFile);
-
-    if (isVideo) {
-      let video = document.createElement("video");
-      video.className = "gallery-image";
-      video.controls = true;
-      video.autoplay = false;
-      video.loop = false;
-
-      if (currentFile.startsWith("http")) {
-        video.src = currentFile;
-      } else {
-        video.src = `images/${currentProject.folder}/${currentFile}`;
-      }
-
-      video.alt = `${currentProject.name} - Video ${currentImageIndex + 1}`;
-
-      video.onerror = () => {
-        container.innerHTML =
-          '<div style="color: #f85149; text-align: center; padding: 20px;">Video could not be loaded</div>';
-      };
-
-      container.appendChild(video);
-    } else {
-      let img = document.createElement("img");
-      img.className = "gallery-image";
-
-      if (currentFile.startsWith("http")) {
-        img.src = currentFile;
-      } else {
-        img.src = `images/${currentProject.folder}/${currentFile}`;
-      }
-
-      img.alt = `${currentProject.name} - Image ${currentImageIndex + 1}`;
-
-      img.onerror = () => {
-        img.src =
-          "https://via.placeholder.com/400x300/161b22/58a6ff?text=Image+not+found";
-      };
-
-      container.appendChild(img);
-    }
-
-    counter.textContent = `${currentImageIndex + 1}/${
-      currentProject.images.length
-    }`;
+  // Execute command
+  const result = executeCommand(command, false);
+  if (result) {
+    const span = document.createElement("span");
+    output.appendChild(span);
+    typeText(span, result, 10, () => input.focus());
   } else {
-    container.innerHTML =
-      '<div style="color: #8b949e; text-align: center;">No images available</div>';
-    counter.textContent = "0/0";
+    input.focus();
   }
 }
 
-function showNextImage() {
-  currentProject &&
-    currentProject.images &&
-    currentImageIndex < currentProject.images.length - 1 &&
-    (currentImageIndex++, showCurrentImage());
+function navigateHistory(direction, input, suggestion) {
+  const historyLength = state.commandHistory.length;
+
+  if (direction === "up" && state.historyIndex < historyLength - 1) {
+    state.historyIndex++;
+    input.value = state.commandHistory[historyLength - 1 - state.historyIndex];
+  } else if (direction === "down") {
+    if (state.historyIndex > 0) {
+      state.historyIndex--;
+      input.value =
+        state.commandHistory[historyLength - 1 - state.historyIndex];
+    } else if (state.historyIndex === 0) {
+      state.historyIndex = -1;
+      input.value = "";
+    }
+  }
+
+  suggestion.textContent = "";
+  updateInputWidth(input);
 }
 
-function showPreviousImage() {
-  currentProject &&
-    currentProject.images &&
-    currentImageIndex > 0 &&
-    (currentImageIndex--, showCurrentImage());
+// ============================================
+// TERMINAL - QUICK NAVIGATION
+// ============================================
+function setupQuickNavigation() {
+  document.querySelectorAll(".quick-nav-btn").forEach((button) => {
+    button.addEventListener("click", () => {
+      const command = button.getAttribute("data-command");
+      executeCommandFromButton(command);
+    });
+  });
 }
 
+function executeCommandFromButton(commandText) {
+  const input = document.getElementById("terminal-input");
+  const terminal = document.getElementById("terminal");
+  const inputLine = document.querySelector(".input-line");
+
+  // Display command
+  const commandLine = document.createElement("div");
+  commandLine.innerHTML = `<span class="prompt">Blood@portfolio:~$</span><span class="command">${commandText}</span>`;
+
+  // Create output container
+  const output = document.createElement("div");
+  output.className = "output";
+
+  // Insert before input line
+  terminal.insertBefore(commandLine, inputLine);
+  terminal.insertBefore(output, inputLine);
+  terminal.scrollTop = terminal.scrollHeight;
+
+  // Execute command
+  const result = executeCommand(commandText, false);
+  if (result) {
+    const span = document.createElement("span");
+    output.appendChild(span);
+    typeText(
+      span,
+      result.replace(/<br>/g, "\n").replace(/<[^>]+>/g, ""),
+      10,
+      () => input.focus()
+    );
+  } else {
+    input.focus();
+  }
+}
+
+// ============================================
+// TERMINAL - COMMANDS
+// ============================================
 const commands = {
   help: () => `Available Commands:
 
@@ -268,211 +245,371 @@ skills     - View my technical skills
 contact    - Get my contact information
 history    - Show command history
 clear      - Clear the terminal`,
-  about() {
-    let { personal: e } = config;
+
+  about: () => {
+    const { personal } = state.config;
     return `About Me
 
-Name: ${e.name}
-Role: ${e.role}
-Location: ${e.location}
+Name: ${personal.name}
+Role: ${personal.role}
+Location: ${personal.location}
 
-${e.description}
+${personal.description}
 
-Interests: ${e.interests}`;
+Interests: ${personal.interests}`;
   },
+
   skills: () => {
     let output = `Technical Skills\n`;
     output += `${"─".repeat(50)}\n\n`;
 
-    config.skills.forEach((skill, index) => {
-      let indicator = "";
+    state.config.skills.forEach((skill, index) => {
+      const indicators = {
+        expert: "▰▰▰▰",
+        advanced: "▰▰▰▱",
+        intermediate: "▰▰▱▱",
+        beginner: "▰▱▱▱",
+      };
 
-      switch (skill.level.toLowerCase()) {
-        case "expert":
-          indicator = "▰▰▰▰";
-          break;
-        case "advanced":
-          indicator = "▰▰▰▱";
-          break;
-        case "intermediate":
-          indicator = "▰▰▱▱";
-          break;
-        case "beginner":
-          indicator = "▰▱▱▱";
-          break;
-      }
+      const indicator = indicators[skill.level.toLowerCase()] || "▱▱▱▱";
 
       output += `  ${skill.name}\n`;
       output += `  ${indicator} ${skill.level}\n`;
 
-      if (index < config.skills.length - 1) {
+      if (index < state.config.skills.length - 1) {
         output += `\n`;
       }
     });
 
     return output;
   },
-  contact() {
-    let { personal: e } = config;
+
+  contact: () => {
+    const { personal } = state.config;
     return `Contact Information
 
-Email: ${e.email}
-Discord: ${e.discord.replace("https://", "")}
-GitHub: ${e.github.replace("https://", "")}
+Email: ${personal.email}
+Discord: ${personal.discord.replace("https://", "")}
+GitHub: ${personal.github.replace("https://", "")}
 
 Feel free to reach out for collaborations or opportunities!`;
   },
-  history: () =>
-    0 === commandHistory.length
-      ? "No commands in history"
-      : `Command History:
 
-${commandHistory.map((e, t) => `${t + 1}: ${e}`).join("\n")}`,
-  projects: () => (openGallery(), "Opening projects gallery..."),
-  clear: () => (
+  history: () => {
+    if (state.commandHistory.length === 0) {
+      return "No commands in history";
+    }
+    return `Command History:\n\n${state.commandHistory
+      .map((cmd, i) => `${i + 1}: ${cmd}`)
+      .join("\n")}`;
+  },
+
+  projects: () => {
+    openGallery();
+    return "Opening projects gallery...";
+  },
+
+  clear: () => {
     setTimeout(() => {
-      document.getElementById("terminal").innerHTML = `
-                <div class="output">
-                    <div class="ascii-art" id="ascii-art"></div>
-                </div>
-                <div class="output">
-                    <span class="info">${config.welcomeMessage}</span>
-                </div>
-                <div class="output">
-                    <span class="command-help">Use the buttons above or type 'help' for commands</span>
-                </div>
-                <br>
-                <div class="input-line">
-                    <span class="prompt">Blood@portfolio:~$</span>
-                    <input type="text" class="terminal-input" id="terminal-input" autocomplete="off">
-                    <span class="suggestion-overlay" id="suggestion-overlay"></span>
-                </div>
-            `;
-      typeAsciiArt(document.getElementById("ascii-art"), config.asciiArt, 30);
-      setupTerminal();
-      let e = document.getElementById("terminal-input");
-      e && e.focus();
-    }, 100),
-    ""
-  ),
+      clearTerminal();
+    }, 100);
+    return "";
+  },
 };
 
-function executeCommand(e, t = !0) {
-  let n = e.trim().toLowerCase();
-  if ((commandHistory.push(n), (historyIndex = -1), commands[n])) {
-    let r = commands[n]();
-    return t ? `<div class="section">${r.replace(/\n/g, "<br>")}</div>` : r;
+function executeCommand(commandText, returnHtml = true) {
+  const command = commandText.trim().toLowerCase();
+
+  // Add to history
+  if (command) {
+    state.commandHistory.push(command);
+    state.historyIndex = -1;
   }
-  return "" === n
-    ? ""
-    : `Command not found: ${n}
-Type 'help' to see available commands`;
+
+  // Execute command
+  if (commands[command]) {
+    const result = commands[command]();
+    return returnHtml
+      ? `<div class="section">${result.replace(/\n/g, "<br>")}</div>`
+      : result;
+  }
+
+  if (command === "") return "";
+
+  return `Command not found: ${command}\nType 'help' to see available commands`;
 }
 
-function setupTerminal() {
-  let terminal = document.getElementById("terminal"),
-    input = document.getElementById("terminal-input"),
-    suggestion = document.getElementById("suggestion-overlay");
+function clearTerminal() {
+  const terminal = document.getElementById("terminal");
+  terminal.innerHTML = `
+    <div class="output">
+      <div class="ascii-art" id="ascii-art"></div>
+    </div>
+    <div class="output">
+      <span class="info">${state.config.welcomeMessage}</span>
+    </div>
+    <div class="output">
+      <span class="command-help">Use the buttons above or type 'help' for commands</span>
+    </div>
+    <br>
+    <div class="input-line">
+      <span class="prompt">Blood@portfolio:~$</span>
+      <input type="text" class="terminal-input" id="terminal-input" autocomplete="off">
+      <span class="suggestion-overlay" id="suggestion-overlay"></span>
+    </div>
+  `;
 
-  if (!suggestion) {
-    suggestion = document.createElement("span");
-    suggestion.id = "suggestion-overlay";
-    suggestion.className = "suggestion-overlay";
-    let inputLine = document.querySelector(".input-line");
+  typeAsciiArt(document.getElementById("ascii-art"), state.config.asciiArt, 30);
+  setupTerminalInput();
+  document.getElementById("terminal-input")?.focus();
+}
+
+// ============================================
+// ANIMATION UTILITIES
+// ============================================
+function typeAsciiArt(element, lines, speed = 20) {
+  element.innerHTML = "";
+
+  const maxLength = Math.max(...lines.map((line) => line.length));
+  let currentColumn = 0;
+  const displayLines = lines.map(() => "");
+
+  function typeColumn() {
+    if (currentColumn < maxLength) {
+      for (let i = 0; i < lines.length; i++) {
+        displayLines[i] +=
+          currentColumn < lines[i].length ? lines[i][currentColumn] : " ";
+      }
+      element.innerHTML = displayLines.join("\n");
+      currentColumn++;
+      setTimeout(typeColumn, speed);
+    }
   }
 
-  function updateInputWidth() {
-    let tempSpan = document.createElement("span");
-    tempSpan.style.visibility = "hidden";
-    tempSpan.style.position = "absolute";
-    tempSpan.style.whiteSpace = "pre";
-    tempSpan.style.font = window.getComputedStyle(input).font;
-    tempSpan.textContent = input.value || " ";
-    document.body.appendChild(tempSpan);
+  typeColumn();
+}
 
-    input.style.width = tempSpan.offsetWidth + 2 + "px";
-    document.body.removeChild(tempSpan);
-  }
+function typeText(element, text, speed = 15, callback = null) {
+  element.innerHTML = "";
+  let index = 0;
+  const terminal = document.getElementById("terminal");
 
-  input.addEventListener("input", () => {
-    updateInputWidth();
-
-    let value = input.value.toLowerCase();
-    if (!value) {
-      suggestion.textContent = "";
-      return;
-    }
-
-    let matches = Object.keys(commands).filter((cmd) => cmd.startsWith(value));
-    if (matches.length > 0) {
-      suggestion.textContent = matches[0].substring(value.length);
-    } else {
-      suggestion.textContent = "";
-    }
-  });
-
-  updateInputWidth();
-
-  input.addEventListener("keydown", (e) => {
-    setTimeout(updateInputWidth, 0);
-
-    if (e.key === "Enter") {
-      let command = input.value;
-      let commandLine = document.createElement("div");
-      commandLine.innerHTML = `<span class="prompt">Blood@portfolio:~$</span><span class="command">${command}</span>`;
-      let output = document.createElement("div");
-      output.className = "output";
-      let inputLine = document.querySelector(".input-line");
-      terminal.insertBefore(commandLine, inputLine);
-      terminal.insertBefore(output, inputLine);
-      input.value = "";
-      suggestion.textContent = "";
+  function type() {
+    if (index < text.length) {
+      element.innerHTML += text[index] === "\n" ? "<br>" : text[index];
+      index++;
       terminal.scrollTop = terminal.scrollHeight;
-      updateInputWidth();
-
-      let result = executeCommand(command, !1);
-      if (result) {
-        let span = document.createElement("span");
-        output.appendChild(span);
-        typeText(span, result, 10, () => {
-          input.focus();
-        });
-      } else input.focus();
+      setTimeout(type, speed);
+    } else if (callback) {
+      callback();
     }
+  }
 
-    if (e.key === "ArrowUp") {
-      e.preventDefault();
-      if (historyIndex < commandHistory.length - 1) {
-        historyIndex++;
-        input.value = commandHistory[commandHistory.length - 1 - historyIndex];
-        suggestion.textContent = "";
-        updateInputWidth();
-      }
+  type();
+}
+
+// ============================================
+// GALLERY - INITIALIZATION
+// ============================================
+function initializeGallery() {
+  state.gallery.projects = [
+    {
+      name: "Anime Project",
+      folder: "anime",
+      images: ["image-13.jpg", "image-14.jpg", "image-23.jpg", "image-34.jpg"],
+    },
+    {
+      name: "Cartoony Project",
+      folder: "cartoony",
+      images: ["image-90.jpg", "image-92.jpg", "image-95.jpg"],
+    },
+    {
+      name: "Videos Test",
+      folder: "videos",
+      images: [
+        "low_size.mp4",
+        "mid_size.mp4",
+        "high_size.mp4",
+        "huge_size.mp4",
+      ],
+    },
+  ];
+
+  populateProjectList();
+}
+
+function setupGalleryControls() {
+  document
+    .getElementById("gallery-close")
+    ?.addEventListener("click", closeGallery);
+  document
+    .getElementById("prev-btn")
+    ?.addEventListener("click", showPreviousImage);
+  document.getElementById("next-btn")?.addEventListener("click", showNextImage);
+}
+
+function populateProjectList() {
+  const projectList = document.getElementById("project-list");
+  if (!projectList) return;
+
+  projectList.innerHTML = "";
+
+  state.gallery.projects.forEach((project) => {
+    const projectItem = document.createElement("div");
+    projectItem.className = "project-item";
+    projectItem.textContent = project.name;
+    projectItem.addEventListener("click", () => selectProject(project));
+    projectList.appendChild(projectItem);
+  });
+}
+
+// ============================================
+// GALLERY - CONTROLS
+// ============================================
+function openGallery() {
+  const container = document.getElementById("gallery-container");
+  if (!container) return;
+
+  container.style.display = "block";
+  container.style.opacity = "0";
+
+  setTimeout(() => {
+    container.classList.add("opening");
+    container.style.opacity = "1";
+  }, 10);
+
+  setTimeout(() => {
+    if (state.gallery.projects.length > 0 && !state.gallery.currentProject) {
+      selectProject(state.gallery.projects[0]);
     }
+  }, 100);
+}
 
-    if (e.key === "ArrowDown") {
-      e.preventDefault();
-      if (historyIndex > 0) {
-        historyIndex--;
-        input.value = commandHistory[commandHistory.length - 1 - historyIndex];
-        suggestion.textContent = "";
-      } else if (historyIndex === 0) {
-        historyIndex = -1;
-        input.value = "";
-        suggestion.textContent = "";
-      }
-      updateInputWidth();
-    }
+function closeGallery() {
+  const container = document.getElementById("gallery-container");
+  if (!container) return;
 
-    if ((e.key === "Tab" || e.key === "ArrowRight") && suggestion.textContent) {
-      e.preventDefault();
-      input.value += suggestion.textContent;
-      suggestion.textContent = "";
-      input.dispatchEvent(new Event("input"));
+  container.style.opacity = "0";
+  container.classList.remove("opening");
+
+  setTimeout(() => {
+    container.style.display = "none";
+    state.gallery.currentProject = null;
+    state.gallery.currentImageIndex = 0;
+  }, 300);
+}
+
+function selectProject(project) {
+  state.gallery.currentProject = project;
+  state.gallery.currentImageIndex = 0;
+
+  // Update active state
+  document.querySelectorAll(".project-item").forEach((item) => {
+    if (item.textContent === project.name) {
+      item.classList.add("active");
+    } else {
+      item.classList.remove("active");
     }
   });
 
-  document.addEventListener("click", () => input.focus());
+  showCurrentImage();
 }
 
+// ============================================
+// GALLERY - IMAGE/VIDEO DISPLAY
+// ============================================
+function showCurrentImage() {
+  const { currentProject, currentImageIndex } = state.gallery;
+  if (!currentProject || !currentProject.images) return;
+
+  const container = document.getElementById("image-container");
+  const counter = document.getElementById("image-counter");
+  if (!container || !counter) return;
+
+  container.innerHTML = "";
+
+  if (currentProject.images.length === 0) {
+    container.innerHTML =
+      '<div style="color: #8b949e; text-align: center;">No images available</div>';
+    counter.textContent = "0/0";
+    return;
+  }
+
+  const currentFile = currentProject.images[currentImageIndex];
+  const isVideo = isVideoFile(currentFile);
+
+  if (isVideo) {
+    displayVideo(container, currentFile, currentProject);
+  } else {
+    displayImage(container, currentFile, currentProject);
+  }
+
+  counter.textContent = `${currentImageIndex + 1}/${
+    currentProject.images.length
+  }`;
+}
+
+function displayImage(container, filename, project) {
+  const img = document.createElement("img");
+  img.className = "gallery-image";
+  img.src = filename.startsWith("http")
+    ? filename
+    : `images/${project.folder}/${filename}`;
+  img.alt = `${project.name} - Image ${state.gallery.currentImageIndex + 1}`;
+
+  img.onerror = () => {
+    img.src =
+      "https://via.placeholder.com/400x300/161b22/58a6ff?text=Image+not+found";
+  };
+
+  container.appendChild(img);
+}
+
+function displayVideo(container, filename, project) {
+  const video = document.createElement("video");
+  video.className = "gallery-image";
+  video.controls = true;
+  video.autoplay = false;
+  video.loop = false;
+  video.src = filename.startsWith("http")
+    ? filename
+    : `images/${project.folder}/${filename}`;
+  video.alt = `${project.name} - Video ${state.gallery.currentImageIndex + 1}`;
+
+  video.onerror = () => {
+    container.innerHTML =
+      '<div style="color: #f85149; text-align: center; padding: 20px;">Video could not be loaded</div>';
+  };
+
+  container.appendChild(video);
+}
+
+function isVideoFile(filename) {
+  const videoExtensions = [".mp4", ".webm", ".ogg", ".mov"];
+  return videoExtensions.some((ext) => filename.toLowerCase().endsWith(ext));
+}
+
+function showNextImage() {
+  const { currentProject, currentImageIndex } = state.gallery;
+  if (
+    currentProject &&
+    currentProject.images &&
+    currentImageIndex < currentProject.images.length - 1
+  ) {
+    state.gallery.currentImageIndex++;
+    showCurrentImage();
+  }
+}
+
+function showPreviousImage() {
+  const { currentProject, currentImageIndex } = state.gallery;
+  if (currentProject && currentProject.images && currentImageIndex > 0) {
+    state.gallery.currentImageIndex--;
+    showCurrentImage();
+  }
+}
+
+// ============================================
+// START APPLICATION
+// ============================================
 loadConfig();
