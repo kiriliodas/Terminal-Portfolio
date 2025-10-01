@@ -372,7 +372,7 @@ body {
 
 .output {
   margin: 8px 0;
-  white-space: pre-wrap;
+  white-space: pre;
 }
 
 .ascii-art {
@@ -380,7 +380,8 @@ body {
   font-size: 12px;
   line-height: 1.2;
   margin: 20px 0;
-  font-family: "JetBrains Mono", monospace;
+  font-family: Consolas, "Courier New", monospace;
+  white-space: pre;
 }
 
 .highlight {
