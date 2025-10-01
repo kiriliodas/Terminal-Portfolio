@@ -244,7 +244,19 @@ projects   - Open the projects gallery
 skills     - View my technical skills
 contact    - Get my contact information
 history    - Show command history
-clear      - Clear the terminal`,
+clear      - Clear the terminal
+
+System Commands:
+ls         - List directory contents
+pwd        - Print working directory
+whoami     - Display current user
+date       - Show current date and time
+uname      - System information
+echo       - Display a line of text
+tree       - Display directory tree
+neofetch   - System information (stylized)
+color      - Change terminal color theme
+fortune    - Display a random quote`,
 
   about: () => {
     const { personal } = state.config;
@@ -315,7 +327,217 @@ Feel free to reach out for collaborations or opportunities!`;
     }, 100);
     return "";
   },
+
+  // ============================================
+  // SYSTEM COMMANDS
+  // ============================================
+
+  ls: () => {
+    return `total 5
+drwxr-xr-x  2 blood blood 4096 Oct  1 18:45 projects/
+-rw-r--r--  1 blood blood 2973 Oct  1 22:56 config.json
+-rw-r--r--  1 blood blood 4221 Oct  1 07:12 index.html
+-rw-r--r--  1 blood blood 10286 Oct  1 15:43 style.css
+-rw-r--r--  1 blood blood  26196 Oct  1 18:46 script.js`;
+  },
+
+  pwd: () => {
+    return `/internet/github/kiriliodas/terminal-portfolio`;
+  },
+
+  whoami: () => {
+    return `blood (Blood_Streams) (Owner)`;
+  },
+
+  date: () => {
+    const now = new Date();
+    return now.toString();
+  },
+
+  uname: () => {
+    return `Linux terminal portfolio 5.15.0-blood #1 SMP ${new Date().toDateString()} x86_64 GNU/Linux`;
+  },
+
+  echo: (args) => {
+    return args.join(" ") || "";
+  },
+
+  tree: () => {
+    return `portfolio/
+├── projects/
+│   ├── config.json
+│   ├── index.html
+│   ├── script.js
+│   ├── style.css
+│   └── images/
+│       ├── anime/
+│       │   ├── image-13.jpg
+│       │   ├── image-14.jpg
+│       │   ├── image-23.jpg
+│       │   └── image-34.jpg
+│       ├── cartoony/
+│       │   ├── image-90.jpg
+│       │   ├── image-92.jpg
+│       │   └── image-95.jpg
+│       └── videos/
+│           ├── high_size.mp4
+│           ├── huge_size.mp4
+│           ├── low_size.mp4
+│           └── mid_size.mp4
+
+3 directories, 15 files`;
+  },
+
+  neofetch: () => {
+    const { personal } = state.config;
+    return `           ▄▄▄▄▄▄▄▄
+        ▄█████████████▄          ${personal.name}@portfolio
+      ▄█████████████████▄        ${"─".repeat(25)}
+     ████████████████████▌       OS: Portfolio Linux
+    ▐████████████████████▌       Host: Terminal Interface
+    ████████████████████▌        Kernel: 5.15.0-blood
+    ▐███████████████████         Uptime: ${Math.floor(Math.random() * 24)} hours
+     ████████████████████         Shell: bash 5.1.16
+      ▀█████████████████▀         Resolution: 1920x1080
+        ▀█████████████▀           Theme: GitHub Dark
+           ▀▀▀▀▀▀▀▀▀              Location: ${personal.location}
+                                  Role: ${personal.role}`;
+  },
+
+  fortune: () => {
+    if (!state.config.quotes || state.config.quotes.length === 0) {
+      return "No quotes available in config.json";
+    }
+    const quotes = state.config.quotes;
+    return quotes[Math.floor(Math.random() * quotes.length)];
+  },
+
+  color: () => {
+    const colors = ["default", "matrix", "dracula", "monokai", "nord"];
+    const currentIndex = state.currentTheme || 0;
+    const nextIndex = (currentIndex + 1) % colors.length;
+    state.currentTheme = nextIndex;
+
+    applyColorTheme(colors[nextIndex]);
+    return `Color theme changed to: ${colors[nextIndex]}\nType 'color' again to cycle through themes`;
+  },
 };
+
+// ============================================
+// COLOR THEME SYSTEM
+// ============================================
+function applyColorTheme(theme) {
+  const root = document.documentElement;
+  const themes = {
+    default: {
+      bg: "#0d1117",
+      termBg: "#161b22",
+      border: "#30363d",
+      text: "#c9d1d9",
+      prompt: "#58a6ff",
+      command: "#7ee787",
+    },
+    matrix: {
+      bg: "#000000",
+      termBg: "#0a0e0a",
+      border: "#00ff00",
+      text: "#00ff00",
+      prompt: "#00ff00",
+      command: "#39ff14",
+    },
+    dracula: {
+      bg: "#1e1e2e",
+      termBg: "#282a36",
+      border: "#44475a",
+      text: "#f8f8f2",
+      prompt: "#bd93f9",
+      command: "#50fa7b",
+    },
+    monokai: {
+      bg: "#1e1e1e",
+      termBg: "#272822",
+      border: "#3e3d32",
+      text: "#f8f8f2",
+      prompt: "#f92672",
+      command: "#a6e22e",
+    },
+    nord: {
+      bg: "#2e3440",
+      termBg: "#3b4252",
+      border: "#4c566a",
+      text: "#eceff4",
+      prompt: "#88c0d0",
+      command: "#a3be8c",
+    },
+  };
+
+  const colors = themes[theme] || themes.default;
+
+  document.body.style.background = colors.bg;
+  document.querySelector(".terminal").style.background = colors.termBg;
+  document.querySelector(".terminal").style.borderColor = colors.border;
+}
+
+// ============================================
+// COMMAND EXECUTION WITH ARGUMENTS
+// ============================================
+function executeCommand(commandText, returnHtml = true) {
+  const parts = commandText.trim().split(" ");
+  const command = parts[0].toLowerCase();
+  const args = parts.slice(1);
+
+  // Add to history
+  if (commandText.trim()) {
+    state.commandHistory.push(commandText.trim());
+    state.historyIndex = -1;
+  }
+
+  // Execute command
+  if (commands[command]) {
+    const result = commands[command](args);
+    return returnHtml
+      ? `<div class="section">${result.replace(/\n/g, "<br>")}</div>`
+      : result;
+  }
+
+  if (command === "") return "";
+
+  // Easter eggs
+  if (command === "sudo") {
+    return `[sudo] password for blood: 
+Sorry, user blood is not in the sudoers file. This incident will be reported.`;
+  }
+
+  if (command === "rm" && args.includes("-rf")) {
+    return `rm: cannot remove '/': Permission denied
+[!] Error: Cannot delete portfolio. This is a feature, not a bug.`;
+  }
+
+  if (command === "exit" || command === "quit") {
+    return `logout
+Connection to portfolio closed.
+
+To exit, simply close this tab.`;
+  }
+
+  if (command === "nano" || command === "vim" || command === "vi") {
+    return `${command}: command not found
+Hint: Use 'cat' to view files instead.`;
+  }
+
+  if (command === "ping") {
+    return `PING blood.portfolio (127.0.0.1) 56(84) bytes of data.
+64 bytes from localhost (127.0.0.1): icmp_seq=1 ttl=64 time=0.042 ms
+64 bytes from localhost (127.0.0.1): icmp_seq=2 ttl=64 time=0.039 ms
+64 bytes from localhost (127.0.0.1): icmp_seq=3 ttl=64 time=0.041 ms
+^C
+--- blood.portfolio ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2048ms`;
+  }
+
+  return `bash: ${command}: command not found
+Type 'help' to see available commands`;
+}
 
 function executeCommand(commandText, returnHtml = true) {
   const command = commandText.trim().toLowerCase();
