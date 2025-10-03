@@ -98,6 +98,13 @@ function updateSuggestion(input, suggestion) {
 }
 
 function handleKeyboardInput(e, input, suggestion, terminal) {
+	const galleryContainer = document.getElementById("gallery-container");
+	if (galleryContainer && galleryContainer.style.display === "block") {
+		if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "Escape"].includes(e.key)) {
+			return;
+		}
+	}
+
 	setTimeout(() => updateInputWidth(input), 0);
 
 	switch (e.key) {
