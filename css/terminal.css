@@ -108,11 +108,13 @@
 
 .ascii-art {
 	color: #58a6ff;
-	font-size: 12px;
+	font-size: clamp(6px, 1vw, 12px); /* S'adapte automatiquement */
 	line-height: 1.2;
 	margin: 20px 0;
 	font-family: Consolas, "Courier New", monospace;
 	white-space: pre;
+	overflow-x: auto; /* Permet le scroll horizontal si nécessaire */
+	max-width: 100%;
 }
 
 /* ============================================
@@ -236,10 +238,6 @@
 		font-size: 14px;
 	}
 
-	.ascii-art {
-		font-size: 10px;
-	}
-
 	.skill-expert {
 		color: #58a6ff;
 	}
@@ -254,5 +252,40 @@
 
 	.skill-beginner {
 		color: #f85149;
+	}
+}
+
+/* Grand écran */
+@media (min-width: 1400px) {
+	.ascii-art {
+		font-size: 12px;
+	}
+}
+
+/* Écrans moyens */
+@media (min-width: 1024px) and (max-width: 1399px) {
+	.ascii-art {
+		font-size: 10px;
+	}
+}
+
+/* Tablettes */
+@media (min-width: 768px) and (max-width: 1023px) {
+	.ascii-art {
+		font-size: 8px;
+	}
+}
+
+/* Petits écrans */
+@media (max-width: 767px) {
+	.ascii-art {
+		font-size: 6px;
+	}
+}
+
+/* Très petits écrans */
+@media (max-width: 480px) {
+	.ascii-art {
+		font-size: 5px;
 	}
 }
