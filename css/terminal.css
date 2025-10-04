@@ -123,6 +123,7 @@
 	display: flex;
 	align-items: center;
 	position: relative;
+	gap: 10px;
 }
 
 .terminal-input {
@@ -147,7 +148,7 @@
 	pointer-events: none;
 	white-space: pre;
 	z-index: 1;
-	margin-left: 0;
+	margin-left: -10px; /* Ajoutez cette ligne */
 }
 
 /* ============================================

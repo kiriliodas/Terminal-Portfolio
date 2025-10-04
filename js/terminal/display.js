@@ -40,7 +40,7 @@ function buildTerminalHTML() {
     </div>
     <br>
     <div class="input-line">
-      <span class="prompt">Blood@portfolio:~$</span>
+      <span class="prompt">Blood@portfolio:~$ </span>
       <input type="text" class="terminal-input" id="terminal-input" autocomplete="off">
       <span class="suggestion-overlay" id="suggestion-overlay"></span>
     </div>

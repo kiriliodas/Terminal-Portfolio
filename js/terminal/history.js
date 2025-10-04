@@ -49,7 +49,7 @@ function executeCommandFromButton(commandText) {
 
 function appendCommandToTerminal(terminal, inputLine, command) {
 	const commandLine = document.createElement("div");
-	commandLine.innerHTML = `<span class="prompt">Blood@portfolio:~$</span><span class="command">${command}</span>`;
+	commandLine.innerHTML = `<span class="prompt">Blood@portfolio:~$ </span><span class="command">${command}</span>`;
 	terminal.insertBefore(commandLine, inputLine);
 }
 
