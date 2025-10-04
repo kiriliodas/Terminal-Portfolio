@@ -111,7 +111,7 @@
 	font-size: clamp(6px, 1vw, 12px); /* S'adapte automatiquement */
 	line-height: 1.2;
 	margin: 20px 0;
-	font-family: Consolas, "Courier New", monospace;
+	font-family: "Roboto Mono", "Courier New", monospace;
 	white-space: pre;
 	overflow-x: auto; /* Permet le scroll horizontal si nécessaire */
 	max-width: 100%;
