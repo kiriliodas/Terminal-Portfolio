@@ -1,7 +1,7 @@
 import os
 import pyperclip
 
-EXCLUDES = {".git", ".gitignore", "tree.py"}
+EXCLUDES = {".git", ".gitignore", ".python"}
 
 def generate_tree(path=".", prefix=""):
     entries = sorted(
@@ -38,14 +38,14 @@ def main():
     tree_output = f"{root}/\n"
     tree_output += generate_tree(".")
     dirs, files = count_items(".")
-    tree_output += f"\n{dirs} directories, {files} files"
+    tree_output += f"\n{dirs} directories, {files} files`;\n}}"
 
-    formatted_output = f"""tree: () => {{
-    return `{tree_output}`;
-}},"""
+    formatted_output = f"""function getTreeOutput() {{
+\treturn `{tree_output}
+"""
 
     pyperclip.copy(formatted_output)
-    print("Output copié dans le presse-papier.")
+    print("Output copié dans le presse-papier au format fonction JS.")
 
 if __name__ == "__main__":
     main()

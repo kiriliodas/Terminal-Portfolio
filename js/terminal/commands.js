@@ -131,12 +131,13 @@ function handleClear() {
 }
 
 function getLsOutput() {
-	return `total 5
-drwxr-xr-x  2 blood blood 4096 Oct  1 18:45 projects/
--rw-r--r--  1 blood blood 2973 Oct  1 22:56 config.json
--rw-r--r--  1 blood blood 4221 Oct  1 07:12 index.html
--rw-r--r--  1 blood blood 10286 Oct  1 15:43 style.css
--rw-r--r--  1 blood blood  26196 Oct  1 18:46 script.js`;
+	return `total 8
+-rw-r--r--  1 blood blood  10721 Oct  3 22:43 config.json
+drwxr-xr-x  2 blood blood  12714 Oct  4 22:23 css/
+drwxr-xr-x  2 blood blood 39591239 Oct  3 23:56 images/
+-rw-r--r--  1 blood blood   3619 Oct  4 22:23 index.html
+drwxr-xr-x  2 blood blood  27856 Oct  4 22:23 js/
+drwxr-xr-x  2 blood blood   3130 Oct  4 22:39 python/`;
 }
 
 function getPwdOutput() {
@@ -161,6 +162,12 @@ function handleEcho(args) {
 
 function getTreeOutput() {
 	return `Terminal-Portfolio/
+├── css/
+│   ├── animations.css
+│   ├── base.css
+│   ├── gallery.css
+│   ├── navigation.css
+│   └── terminal.css
 ├── images/
 │   ├── White-Cartoony/
 │   │   ├── Image_1.png
@@ -177,12 +184,25 @@ function getTreeOutput() {
 │       ├── huge_size.mp4
 │       ├── low_size.mp4
 │       └── mid_size.mp4
+├── js/
+│   ├── gallery/
+│   │   ├── controls.js
+│   │   ├── display.js
+│   │   └── navigation.js
+│   ├── terminal/
+│   │   ├── commands.js
+│   │   ├── display.js
+│   │   ├── history.js
+│   │   └── input.js
+│   ├── utils/
+│   │   ├── animations.js
+│   │   └── themes.js
+│   ├── main.js
+│   └── state.js
 ├── config.json
-├── index.html
-├── script.js
-└── style.css
+└── index.html
 
-3 directories, 17 files`;
+8 directories, 31 files`;
 }
 
 function getRandomQuote() {
