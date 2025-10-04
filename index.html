@@ -1,125 +1,104 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Blood - Terminal Portfolio</title>
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Blood - Terminal Portfolio</title>
 
-    <!-- Fonts & Icons -->
-    <link
-      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap"
-      rel="stylesheet"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
-    />
+		<link
+			href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap"
+			rel="stylesheet"
+		/>
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" />
 
-    <!-- Stylesheet -->
-    <link rel="stylesheet" href="style.css" />
-  </head>
+		<!-- Stylesheets -->
+		<link rel="stylesheet" href="css/base.css" />
+		<link rel="stylesheet" href="css/terminal.css" />
+		<link rel="stylesheet" href="css/gallery.css" />
+		<link rel="stylesheet" href="css/navigation.css" />
+		<link rel="stylesheet" href="css/animations.css" />
+	</head>
+	<body>
+		<div class="terminal">
+			<div class="terminal-header">
+				<div class="terminal-left">
+					<div class="terminal-buttons">
+						<div class="btn close"></div>
+						<div class="btn minimize"></div>
+						<div class="btn maximize"></div>
+					</div>
+					<div class="terminal-title">Blood@terminal: ~</div>
+				</div>
 
-  <body>
-    <!-- Main Terminal Container -->
-    <div class="terminal">
-      <!-- Terminal Header -->
-      <div class="terminal-header">
-        <div class="terminal-left">
-          <div class="terminal-buttons">
-            <div class="btn close"></div>
-            <div class="btn minimize"></div>
-            <div class="btn maximize"></div>
-          </div>
-          <div class="terminal-title">Blood@terminal: ~</div>
-        </div>
+				<nav class="quick-nav" id="quick-nav">
+					<button class="quick-nav-btn" data-command="help">
+						<i class="fa-solid fa-circle-question nav-icon"></i>
+						<span class="nav-text">Help</span>
+					</button>
+					<button class="quick-nav-btn" data-command="about">
+						<i class="fa-solid fa-user nav-icon"></i>
+						<span class="nav-text">About</span>
+					</button>
+					<button class="quick-nav-btn" data-command="skills">
+						<i class="fa-solid fa-bolt nav-icon"></i>
+						<span class="nav-text">Skills</span>
+					</button>
+					<button class="quick-nav-btn" data-command="projects">
+						<i class="fa-solid fa-folder nav-icon"></i>
+						<span class="nav-text">Projects</span>
+					</button>
+					<button class="quick-nav-btn" data-command="contact">
+						<i class="fa-solid fa-envelope nav-icon"></i>
+						<span class="nav-text">Contact</span>
+					</button>
+				</nav>
+			</div>
 
-        <!-- Quick Navigation -->
-        <nav class="quick-nav" id="quick-nav">
-          <button class="quick-nav-btn" data-command="help">
-            <i class="fa-solid fa-circle-question nav-icon"></i>
-            <span class="nav-text">Help</span>
-          </button>
-          <button class="quick-nav-btn" data-command="about">
-            <i class="fa-solid fa-user nav-icon"></i>
-            <span class="nav-text">About</span>
-          </button>
-          <button class="quick-nav-btn" data-command="skills">
-            <i class="fa-solid fa-bolt nav-icon"></i>
-            <span class="nav-text">Skills</span>
-          </button>
-          <button class="quick-nav-btn" data-command="projects">
-            <i class="fa-solid fa-folder nav-icon"></i>
-            <span class="nav-text">Projects</span>
-          </button>
-          <button class="quick-nav-btn" data-command="contact">
-            <i class="fa-solid fa-envelope nav-icon"></i>
-            <span class="nav-text">Contact</span>
-          </button>
-        </nav>
-      </div>
+			<div class="terminal-body" id="terminal">
+				<div class="output">
+					<div class="ascii-art" id="ascii-art"></div>
+				</div>
+				<div class="output">
+					<span class="info">Welcome to my interactive portfolio!</span>
+				</div>
+				<div class="output">
+					<span class="command-help">Use the buttons above or type 'help' for commands</span>
+				</div>
+				<br />
 
-      <!-- Terminal Body -->
-      <div class="terminal-body" id="terminal">
-        <div class="output">
-          <div class="ascii-art" id="ascii-art"></div>
-        </div>
-        <div class="output">
-          <span class="info">Welcome to my interactive portfolio!</span>
-        </div>
-        <div class="output">
-          <span class="command-help"
-            >Use the buttons above or type 'help' for commands</span
-          >
-        </div>
-        <br />
+				<div class="input-line">
+					<span class="prompt">Blood@portfolio:~$</span>
+					<input type="text" class="terminal-input" id="terminal-input" autocomplete="off" autofocus />
+					<span class="suggestion-overlay" id="suggestion-overlay"></span>
+				</div>
+			</div>
+		</div>
 
-        <!-- Input Line -->
-        <div class="input-line">
-          <span class="prompt">Blood@portfolio:~$</span>
-          <input
-            type="text"
-            class="terminal-input"
-            id="terminal-input"
-            autocomplete="off"
-            autofocus
-          />
-          <span class="suggestion-overlay" id="suggestion-overlay"></span>
-        </div>
-      </div>
-    </div>
+		<div class="gallery-container" id="gallery-container">
+			<div class="gallery-header">
+				<div class="gallery-buttons">
+					<div class="btn close" id="gallery-close"></div>
+				</div>
+				<div class="gallery-title">Blood@projects: ~</div>
+			</div>
 
-    <!-- Gallery Modal -->
-    <div class="gallery-container" id="gallery-container">
-      <div class="gallery-header">
-        <div class="gallery-buttons">
-          <div class="btn close" id="gallery-close"></div>
-        </div>
-        <div class="gallery-title">Blood@projects: ~</div>
-      </div>
+			<div class="gallery-body">
+				<div class="gallery-sidebar">
+					<div class="project-list" id="project-list"></div>
+				</div>
 
-      <div class="gallery-body">
-        <!-- Sidebar - Project List -->
-        <div class="gallery-sidebar">
-          <div class="project-list" id="project-list"></div>
-        </div>
+				<div class="gallery-content">
+					<div class="image-container" id="image-container"></div>
+					<div class="gallery-navigation">
+						<button class="nav-btn" id="prev-btn"><i class="fa-solid fa-arrow-left"></i> Previous</button>
+						<span class="image-counter" id="image-counter">1/1</span>
+						<button class="nav-btn" id="next-btn">Next <i class="fa-solid fa-arrow-right"></i></button>
+					</div>
+				</div>
+			</div>
+		</div>
 
-        <!-- Content Area -->
-        <div class="gallery-content">
-          <div class="image-container" id="image-container"></div>
-          <div class="gallery-navigation">
-            <button class="nav-btn" id="prev-btn">
-              <i class="fa-solid fa-arrow-left"></i> Previous
-            </button>
-            <span class="image-counter" id="image-counter">1/1</span>
-            <button class="nav-btn" id="next-btn">
-              Next <i class="fa-solid fa-arrow-right"></i>
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- JavaScript -->
-    <script src="script.js"></script>
-  </body>
+		<!-- Scripts -->
+		<script type="module" src="js/main.js"></script>
+	</body>
 </html>
