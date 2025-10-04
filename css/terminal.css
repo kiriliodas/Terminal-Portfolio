@@ -6,10 +6,11 @@
 	height: 100vh;
 	background: #161b22;
 	border: 1px solid #30363d;
-	margin: 10px;
-	border-radius: 6px;
+	margin: 0; /* Enlève les marges */
+	border-radius: 0; /* Ou garde 6px si tu veux garder les coins arrondis */
 	box-shadow: 0 16px 70px rgba(0, 0, 0, 0.3);
 	animation: terminalBoot 0.8s ease-out;
+	overflow: hidden;
 }
 
 .terminal-header {
@@ -82,9 +83,12 @@
 
 .terminal-body {
 	padding: 20px;
-	height: calc(100vh - 60px);
+	height: calc(100% - 49px);
 	overflow-y: auto;
+	overflow-x: hidden; /* Cache le scroll horizontal */
 	line-height: 1.6;
+	word-wrap: break-word; /* Casse les mots longs */
+	overflow-wrap: break-word; /* Alternative moderne */
 }
 
 .prompt {
@@ -99,7 +103,9 @@
 
 .output {
 	margin: 8px 0;
-	white-space: pre;
+	white-space: pre-wrap; /* Change de 'pre' à 'pre-wrap' pour wrapper le texte */
+	word-wrap: break-word;
+	max-width: 100%; /* Limite la largeur au conteneur */
 }
 
 /* ============================================
@@ -161,6 +167,8 @@
 	margin: 20px 0;
 	padding: 15px 0 15px 15px;
 	border-left: 3px solid #58a6ff;
+	max-width: 100%; /* Empêche le débordement */
+	overflow-wrap: break-word;
 }
 
 /* ============================================
