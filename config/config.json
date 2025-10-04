@@ -1,0 +1,32 @@
+{
+	"personal": {
+		"name": "Blood",
+		"role": "Ui/UX Designer & Frontend Developer",
+		"location": "Paris, France ",
+		"description": "I'm a creative developer specializing in UI design for Roblox experiences, with a strong background in web development. I enjoy crafting engaging interfaces and bringing ideas to life through intuitive design and efficient code.",
+		"interests": "Web Development, UI/UX Design, Open Source",
+		"email": "mael.poignan@gmail.com",
+		"discord": "https://discordapp.com/users/1072226535760732210",
+		"github": "https://github.com/kiriliodas",
+		"twitter": "https://twitter.com/yourname"
+	},
+	"skills": [
+		{ "name": "Roblox Studio", "level": "Advanced" },
+		{ "name": "Figma", "level": "Intermediate" },
+		{ "name": "HTML/CSS", "level": "Advanced" },
+		{ "name": "JavaScript", "level": "Advanced" },
+		{ "name": "Python", "level": "Advanced" },
+		{ "name": "Photoshop", "level": "Intermediate" }
+	],
+	"resumeLink": "#",
+	"welcomeMessage": "Welcome to my interactive portfolio!",
+	"helpMessage": "Type 'help' to see available commands",
+	"asciiArt": [
+		"██████╗ ██╗     ██████╗  ██████╗ ██████╗     ██████╗  ██████╗ ██████╗ ████████╗███████╗ ██████╗ ██╗     ██╗ ██████╗ ",
+		"██╔══██╗██║    ██╔═══██╗██╔═══██╗██╔══██╗    ██╔══██╗██╔═══██╗██╔══██╗╚══██╔══╝██╔════╝██╔═══██╗██║     ██║██╔═══██╗",
+		"██████╔╝██║    ██║   ██║██║   ██║██║  ██║    ██████╔╝██║   ██║██████╔╝   ██║   █████╗  ██║   ██║██║     ██║██║   ██║",
+		"██╔══██╗██║    ██║   ██║██║   ██║██║  ██║    ██╔═══╝ ██║   ██║██╔══██╗   ██║   ██╔══╝  ██║   ██║██║     ██║██║   ██║",
+		"██████╔╝███████╗╚█████╔╝╚██████╔╝██████╔╝    ██║     ╚██████╔╝██║  ██║   ██║   ██║     ╚██████╔╝███████╗██║╚██████╔╝",
+		"╚═════╝ ╚══════╝ ╚════╝  ╚═════╝ ╚═════╝     ╚═╝      ╚═════╝ ╚═╝  ╚═╝   ╚═╝   ╚═╝      ╚═════╝ ╚══════╝╚═╝ ╚═════╝ "
+	]
+}

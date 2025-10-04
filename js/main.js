@@ -6,8 +6,15 @@ import { setupQuickNavigation } from "./terminal/history.js";
 
 async function loadConfig() {
 	try {
-		const response = await fetch("config.json");
-		state.config = await response.json();
+		const [configResponse, quotesResponse] = await Promise.all([
+			fetch("config/config.json"),
+			fetch("config/quotes.json"),
+		]);
+
+		state.config = await configResponse.json();
+		const quotesData = await quotesResponse.json();
+		state.config.quotes = quotesData.quotes;
+
 		initializeApp();
 	} catch (error) {
 		console.error("Error loading config:", error);
