@@ -3,59 +3,65 @@
    ============================================ */
 
 .quick-nav {
-	display: flex;
-	gap: 4px;
-	margin-left: auto;
+  display: flex;
+  gap: 4px;
+  margin-left: auto;
+  align-items: center; /* vertically center buttons within header */
 }
 
 .quick-nav-btn {
-	position: relative;
-	color: #8b949e;
-	padding: 8px 14px;
-	cursor: pointer;
-	border: none;
-	background: transparent;
-	font-family: "JetBrains Mono", monospace;
-	font-size: 12px;
-	display: flex;
-	align-items: center;
-	gap: 6px;
-	transition: all 0.2s ease;
-	border-radius: 4px;
+  position: relative;
+  color: #8b949e;
+  padding: 8px 14px;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+  border-radius: 4px;
+  line-height: 1; /* normalize baseline alignment */
 }
 
 .quick-nav-btn::before {
-	content: "";
-	position: absolute;
-	bottom: 0;
-	left: 50%;
-	transform: translateX(-50%);
-	width: 0;
-	height: 2px;
-	background: #58a6ff;
-	transition: width 0.3s ease;
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 2px;
+  background: #58a6ff;
+  transition: width 0.3s ease;
 }
 
 .quick-nav-btn:hover {
-	color: #58a6ff;
-	background: rgba(88, 166, 255, 0.1);
+  color: #58a6ff;
+  background: rgba(88, 166, 255, 0.1);
 }
 
 .quick-nav-btn:hover::before {
-	width: 80%;
+  width: 80%;
 }
 
 .quick-nav-btn:active {
-	transform: scale(0.98);
+  transform: scale(0.98);
 }
 
 .nav-icon {
-	font-size: 14px;
+  font-size: 14px;
+  line-height: 1; /* align icon vertically */
+  vertical-align: middle;
+  display: inline-block;
 }
 
 .nav-text {
-	font-weight: 400;
-	letter-spacing: 0.3px;
+  font-weight: 400;
+  letter-spacing: 0.3px;
+  line-height: 1; /* align text vertically with icon */
 }
 
 /* ============================================
@@ -63,38 +69,38 @@
    ============================================ */
 
 .gallery-navigation {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	padding: 10px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
 }
 
 .nav-btn {
-	background: #21262d;
-	color: #c9d1d9;
-	border: 1px solid #30363d;
-	padding: 6px 12px;
-	border-radius: 4px;
-	cursor: pointer;
-	font-family: "JetBrains Mono", monospace;
-	transition: background 0.2s;
+  background: #21262d;
+  color: #c9d1d9;
+  border: 1px solid #30363d;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: "JetBrains Mono", monospace;
+  transition: background 0.2s;
 }
 
 .nav-btn:hover {
-	background: #2d333b;
-	color: #58a6ff;
+  background: #2d333b;
+  color: #58a6ff;
 }
 
 .nav-btn:disabled,
 .nav-btn.disabled {
-	opacity: 0.5;
-	cursor: not-allowed;
-	pointer-events: none;
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
 }
 
 .image-counter {
-	font-size: 14px;
-	color: #8b949e;
+  font-size: 14px;
+  color: #8b949e;
 }
 
 /* ============================================
@@ -102,38 +108,38 @@
    ============================================ */
 
 @media (max-width: 1024px) {
-	.quick-nav {
-		gap: 2px;
-	}
+  .quick-nav {
+    gap: 2px;
+  }
 
-	.quick-nav-btn {
-		padding: 8px 12px;
-		font-size: 11px;
-	}
+  .quick-nav-btn {
+    padding: 8px 12px;
+    font-size: 11px;
+  }
 
-	.nav-text {
-		display: none;
-	}
+  .nav-text {
+    display: none;
+  }
 
-	.nav-icon {
-		font-size: 15px;
-	}
+  .nav-icon {
+    font-size: 15px;
+  }
 }
 
 @media (max-width: 768px) {
-	.terminal-header {
-		gap: 10px;
-	}
+  .terminal-header {
+    gap: 10px;
+  }
 
-	.quick-nav {
-		gap: 2px;
-	}
+  .quick-nav {
+    gap: 2px;
+  }
 
-	.quick-nav-btn {
-		padding: 7px 10px;
-	}
+  .quick-nav-btn {
+    padding: 7px 10px;
+  }
 
-	.nav-icon {
-		font-size: 14px;
-	}
+  .nav-icon {
+    font-size: 14px;
+  }
 }

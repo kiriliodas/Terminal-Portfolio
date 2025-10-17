@@ -3,17 +3,27 @@
    ============================================ */
 
 * {
-	margin: 0;
-	padding: 0;
-	box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 body {
-	font-family: "JetBrains Mono", monospace;
-	background: #0d1117;
-	color: #c9d1d9;
-	height: 100vh;
-	overflow: hidden;
+  font-family: "JetBrains Mono", monospace;
+  background: #0d1117;
+  color: #c9d1d9;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* Visually hidden utility for accessible labels */
+.visually-hidden {
+  position: absolute !important;
+  height: 1px;
+  width: 1px;
+  overflow: hidden;
+  clip: rect(1px, 1px, 1px, 1px);
+  white-space: nowrap;
 }
 
 /* ============================================
@@ -21,25 +31,25 @@ body {
    ============================================ */
 
 .terminal-body::-webkit-scrollbar {
-	width: 8px;
+  width: 8px;
 }
 
 .terminal-body::-webkit-scrollbar-track {
-	background: transparent;
+  background: transparent;
 }
 
 .terminal-body::-webkit-scrollbar-thumb {
-	background: rgba(88, 166, 255, 0.3);
-	border-radius: 4px;
+  background: rgba(88, 166, 255, 0.3);
+  border-radius: 4px;
 }
 
 .terminal-body::-webkit-scrollbar-thumb:hover {
-	background: rgba(88, 166, 255, 0.5);
+  background: rgba(88, 166, 255, 0.5);
 }
 
 .terminal-body {
-	scrollbar-width: thin;
-	scrollbar-color: rgba(88, 166, 255, 0.3) transparent;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(88, 166, 255, 0.3) transparent;
 }
 
 /* ============================================
@@ -47,33 +57,33 @@ body {
    ============================================ */
 
 .highlight {
-	color: #7ee787;
+  color: #7ee787;
 }
 
 .warning {
-	color: #f85149;
+  color: #f85149;
 }
 
 .info {
-	color: #79c0ff;
+  color: #79c0ff;
 }
 
 .error {
-	color: #f85149;
+  color: #f85149;
 }
 
 .link {
-	color: #58a6ff;
-	text-decoration: none;
-	transition: color 0.2s ease;
+  color: #58a6ff;
+  text-decoration: none;
+  transition: color 0.2s ease;
 }
 
 .link:hover {
-	color: #7ee787;
-	text-decoration: underline;
+  color: #7ee787;
+  text-decoration: underline;
 }
 
 .command-help {
-	color: #8b949e;
-	font-style: italic;
+  color: #8b949e;
+  font-style: italic;
 }
